@@ -1,2 +1,2 @@
 # Novel
-The Visual Novel by vgurnik&amp;co
+The Visual Novel by Infinite Fantasy
