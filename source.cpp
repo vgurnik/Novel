@@ -14,12 +14,12 @@ using namespace std;
 int winw = 1920;
 int winh = 1080;
 
-//Алфавитные символы, включая русские
+//РђР»С„Р°РІРёС‚РЅС‹Рµ СЃРёРјРІРѕР»С‹, РІРєР»СЋС‡Р°СЏ СЂСѓСЃСЃРєРёРµ
 bool isalpha(wchar_t a) {
-	return (a == L'Ё') || (a == L'ё') || ((a >= L'А') && (a <= L'я')) || ((a >= L'A') && (a <= L'Z')) || ((a >= L'a') && (a <= L'z'));
+	return (a == L'ВЁ') || (a == L'Вё') || ((a >= L'ГЂ') && (a <= L'Гї')) || ((a >= L'A') && (a <= L'Z')) || ((a >= L'a') && (a <= L'z'));
 }
 
-//Считать сырой код из файла, с рекурсивной подгрузкой других файлов через @
+//РЎС‡РёС‚Р°С‚СЊ СЃС‹СЂРѕР№ РєРѕРґ РёР· С„Р°Р№Р»Р°, СЃ СЂРµРєСѓСЂСЃРёРІРЅРѕР№ РїРѕРґРіСЂСѓР·РєРѕР№ РґСЂСѓРіРёС… С„Р°Р№Р»РѕРІ С‡РµСЂРµР· @
 void read(vector<wstring>& code, wstring fname) {
 	if (fname.substr(fname.size() - 4, 4) != L".kek") fname += L".kek";
 	wfstream codeFile(L"script/"+fname);
@@ -41,21 +41,21 @@ void read(vector<wstring>& code, wstring fname) {
 	}
 }
 
-//Вывести блок уровня вложенности ns на экран
+//Р’С‹РІРµСЃС‚Рё Р±Р»РѕРє СѓСЂРѕРІРЅСЏ РІР»РѕР¶РµРЅРЅРѕСЃС‚Рё ns РЅР° СЌРєСЂР°РЅ
 void printBlock(Block& block, int ns) {
 	for (int i = 0; i < block.size(); i++) {
 		for (int j = 0; j < ns; j++) wcout << L"  ";
 		block.line(i).print();
-		if ((block.line(i).tokens[0].name == L"если") || (block.line(i).tokens[0].name == L"пока")) {
+		if ((block.line(i).tokens[0].name == L"РµСЃР»Рё") || (block.line(i).tokens[0].name == L"РїРѕРєР°")) {
 			wcout << L":" << endl;
 			printBlock(block.line(i).block_to, ns + 1);
 			if (!block.line(i).block_else.empty()) {
 				for (int j = 0; j < ns; j++) wcout << L"  L";
-				wcout << L"иначе:" << endl;
+				wcout << L"ГЁГ­Г Г·ГҐ:" << endl;
 				printBlock(block.line(i).block_else, ns + 1);
 			}
 		}
-		else if (block.line(i).tokens[0].name == L"выбор") {
+		else if (block.line(i).tokens[0].name == L"РІС‹Р±РѕСЂ") {
 			wcout << endl;
 			for (int j = 0; j < block.line(i).block_to.size(); j++) {
 				for (int j = 0; j < ns; j++) wcout << L"  ";
@@ -69,8 +69,8 @@ void printBlock(Block& block, int ns) {
 
 Line getLine(vector<wstring>&, Ptr&);
 
-//Получить блок из сырого кода, поинтер обновляется на символ после блока
-//to_bracket - получать блок вида '{...}', с поинтером в начальный момент на '{' / иначе однострочный блок
+//РџРѕР»СѓС‡РёС‚СЊ Р±Р»РѕРє РёР· СЃС‹СЂРѕРіРѕ РєРѕРґР°, РїРѕРёРЅС‚РµСЂ РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ РЅР° СЃРёРјРІРѕР» РїРѕСЃР»Рµ Р±Р»РѕРєР°
+//to_bracket - РїРѕР»СѓС‡Р°С‚СЊ Р±Р»РѕРє РІРёРґР° '{...}', СЃ РїРѕРёРЅС‚РµСЂРѕРј РІ РЅР°С‡Р°Р»СЊРЅС‹Р№ РјРѕРјРµРЅС‚ РЅР° '{' / РёРЅР°С‡Рµ РѕРґРЅРѕСЃС‚СЂРѕС‡РЅС‹Р№ Р±Р»РѕРє
 Block getBlock(vector<wstring>& code, Ptr& ptr, bool to_bracket) {
 	Block block;
 	Line line = getLine(code, ptr);
@@ -83,10 +83,10 @@ Block getBlock(vector<wstring>& code, Ptr& ptr, bool to_bracket) {
 	return block;
 }
 
-//Получить линию из сырого кода, поинтер обновляется на символ после линии
-//Попытка получить линию из конца файла - fatal syntax error
-//Пустые линии, пробелы и табуляции пропускаются; линии в одной строке разделяются ';'
-//Комментарии начинаются на '#' и до конца строки
+//РџРѕР»СѓС‡РёС‚СЊ Р»РёРЅРёСЋ РёР· СЃС‹СЂРѕРіРѕ РєРѕРґР°, РїРѕРёРЅС‚РµСЂ РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ РЅР° СЃРёРјРІРѕР» РїРѕСЃР»Рµ Р»РёРЅРёРё
+//РџРѕРїС‹С‚РєР° РїРѕР»СѓС‡РёС‚СЊ Р»РёРЅРёСЋ РёР· РєРѕРЅС†Р° С„Р°Р№Р»Р° - fatal syntax error
+//РџСѓСЃС‚С‹Рµ Р»РёРЅРёРё, РїСЂРѕР±РµР»С‹ Рё С‚Р°Р±СѓР»СЏС†РёРё РїСЂРѕРїСѓСЃРєР°СЋС‚СЃСЏ; Р»РёРЅРёРё РІ РѕРґРЅРѕР№ СЃС‚СЂРѕРєРµ СЂР°Р·РґРµР»СЏСЋС‚СЃСЏ ';'
+//РљРѕРјРјРµРЅС‚Р°СЂРёРё РЅР°С‡РёРЅР°СЋС‚СЃСЏ РЅР° '#' Рё РґРѕ РєРѕРЅС†Р° СЃС‚СЂРѕРєРё
 Line getLine(vector<wstring>& code, Ptr& ptr) {
 	Line line;
 	if (ptr.lptr >= code.size()) throw runtime_error("unexpected end of code");
@@ -106,32 +106,31 @@ Line getLine(vector<wstring>& code, Ptr& ptr) {
 				c = code[ptr.lptr][ptr.sptr];
 			}
 			t.name = name;
-			if (t.name == L"script") t.name = L"скрипт";
-			if (t.name == L"say") t.name = L"сказать";
-			if (t.name == L"says") t.name = L"говорит";
-			if (t.name == L"show") t.name = L"показать";
-			if (t.name == L"jump") t.name = L"прыгнуть";
-			if (t.name == L"back") t.name = L"фон";
-			if (t.name == L"if") t.name = L"если";
-			if (t.name == L"else") t.name = L"иначе";
-			if (t.name == L"while") t.name = L"пока";
-			if (t.name == L"choose") t.name = L"выбор";
-			if (t.name == L"return") t.name = L"вернуть";
-			if (t.name == L"float") t.name = L"дробное";
-			if (t.name == L"int") t.name = L"целое";
-			if (t.name == L"str") t.name = L"строка";
-			if (t.name == L"bool") t.name = L"логическое";
-			if (t.name == L"character") t.name = L"персонаж";
-			if (t.name == L"pic") t.name = L"картинка";
-			if (t.name == L"label") t.name = L"метка";
-			if (t.name == L"let") t.name = L"пусть";
-			if (t.name == L"const") t.name = L"константа";
-			if (t.name == L"func") t.name = L"функция";
-			if (t.name == L"name") t.name = L"имя";
-			if (t.name == L"sprite") t.name = L"спрайт";
-			if ((t.name == L"скрипт") || (t.name == L"сказать") || (t.name == L"говорит") || (t.name == L"показать") || (t.name == L"прыгнуть") || (t.name == L"фон") || (t.name == L"если") || (t.name == L"иначе") || (t.name == L"пока") || (t.name == L"выбор") || (t.name == L"вернуть")) t.type = Token::Type::PROC;
-			else if ((t.name == L"целое") || (t.name == L"дробное") || (t.name == L"строка") || (t.name == L"логическое") || (t.name == L"персонаж") || (t.name == L"картинка") || (t.name == L"метка") || (t.name == L"пусть") || (t.name == L"константа") || (t.name == L"функция")) t.type = Token::Type::TYPE;
-			else t.type = Token::Type::VAR;
+			if (t.name == L"script") t.name = L"СЃРєСЂРёРїС‚";
+			if (t.name == L"say") t.name = L"СЃРєР°Р·Р°С‚СЊ";
+			if (t.name == L"says") t.name = L"РіРѕРІРѕСЂРёС‚";
+			if (t.name == L"show") t.name = L"РїРѕРєР°Р·Р°С‚СЊ";
+			if (t.name == L"jump") t.name = L"РїСЂС‹РіРЅСѓС‚СЊ";
+			if (t.name == L"back") t.name = L"С„РѕРЅ";
+			if (t.name == L"if") t.name = L"РµСЃР»Рё";
+			if (t.name == L"else") t.name = L"РёРЅР°С‡Рµ";
+			if (t.name == L"while") t.name = L"РїРѕРєР°";
+			if (t.name == L"choose") t.name = L"РІС‹Р±РѕСЂ";
+			if (t.name == L"return") t.name = L"РІРµСЂРЅСѓС‚СЊ";
+			if (t.name == L"float") t.name = L"РґСЂРѕР±РЅРѕРµ";
+			if (t.name == L"int") t.name = L"С†РµР»РѕРµ";
+			if (t.name == L"str") t.name = L"СЃС‚СЂРѕРєР°";
+			if (t.name == L"bool") t.name = L"Р»РѕРіРёС‡РµСЃРєРѕРµ";
+			if (t.name == L"character") t.name = L"РїРµСЂСЃРѕРЅР°Р¶";
+			if (t.name == L"pic") t.name = L"РєР°СЂС‚РёРЅРєР°";
+			if (t.name == L"label") t.name = L"РјРµС‚РєР°";
+			if (t.name == L"let") t.name = L"РїСѓСЃС‚СЊ";
+			if (t.name == L"const") t.name = L"РєРѕРЅСЃС‚Р°РЅС‚Р°";
+			if (t.name == L"func") t.name = L"С„СѓРЅРєС†РёСЏ";
+			if (t.name == L"name") t.name = L"РёРјСЏ";
+			if (t.name == L"sprite") t.name = L"СЃРїСЂР°Р№С‚";
+			if ((t.name == L"СЃРєСЂРёРїС‚") || (t.name == L"СЃРєР°Р·Р°С‚СЊ") || (t.name == L"РіРѕРІРѕСЂРёС‚") || (t.name == L"РїРѕРєР°Р·Р°С‚СЊ") || (t.name == L"РїСЂС‹РіРЅСѓС‚СЊ") || (t.name == L"С„РѕРЅ") || (t.name == L"РµСЃР»Рё") || (t.name == L"РёРЅР°С‡Рµ") || (t.name == L"РїРѕРєР°") || (t.name == L"РІС‹Р±РѕСЂ") || (t.name == L"РІРµСЂРЅСѓС‚СЊ")) t.type = Token::Type::PROC;
+			else if ((t.name == L"С†РµР»РѕРµ") || (t.name == L"РґСЂРѕР±РЅРѕРµ") || (t.name == L"СЃС‚СЂРѕРєР°") || (t.name == L"Р»РѕРіРёС‡РµСЃРєРѕРµ") || (t.name == L"РїРµСЂСЃРѕРЅР°Р¶") || (t.name == L"РєР°СЂС‚РёРЅРєР°") || (t.name == L"РјРµС‚РєР°") || (t.name == L"РїСѓСЃС‚СЊ") || (t.name == L"РєРѕРЅСЃС‚Р°РЅС‚Р°") || (t.name == L"С„СѓРЅРєС†РёСЏ")) t.type = Token::Type::TYPE;else t.type = Token::Type::VAR;
 			line.tokens.push_back(t);
 		}
 		else if (iswdigit(c) || (c == '.')) {
@@ -225,22 +224,22 @@ Line getLine(vector<wstring>& code, Ptr& ptr) {
 		else if (c == '{') {
 			ptr.sptr++;
 			line.block_to = getBlock(code, ptr, true);
-			if (line.tokens[0].name == L"если") {
+			if (line.tokens[0].name == L"РµСЃР»Рё") {
 				Ptr old = ptr;
 				Line new_line = getLine(code, ptr);
-				if (new_line.tokens[0].name == L"иначе")
+				if (new_line.tokens[0].name == L"РёРЅР°С‡Рµ")
 					line.block_else = new_line.block_to;
 				else ptr = old;
 			}
-			if (line.tokens[0].name == L"выбор") {
+			if (line.tokens[0].name == L"РІС‹Р±РѕСЂ") {
 				int i = 0;
 				Block actual;
 				t.type = Token::Type::PROC;
-				t.name = L"выбор";
+				t.name = L"РІС‹Р±РѕСЂ";
 				Line option;
 				option.tokens.push_back(t);
 				while (i < line.block_to.size()) {
-					if ((line.block_to.line(i).tokens[0].vtype != Token::vType::STR) || (line.block_to.line(i).tokens[1].name != L":")) throw runtime_error("incorrect syntax of выбор");
+					if ((line.block_to.line(i).tokens[0].vtype != Token::vType::STR) || (line.block_to.line(i).tokens[1].name != L":")) throw runtime_error("incorrect syntax of РІС‹Р±РѕСЂ");
 					option.tokens[0].sval = line.block_to.line(i).tokens[0].sval;
 					i++;
 					Block sublock;
@@ -289,24 +288,24 @@ Line getLine(vector<wstring>& code, Ptr& ptr) {
 	ptr.sptr = 0;
 	if (line.empty())
 		throw runtime_error("unexpected end of code");
-	if ((line.tokens[0].name == L"пока") || (line.tokens[0].name == L"иначе")) line.block_to = getBlock(code, ptr, false);
-	if (line.tokens[0].name == L"если") {
+		if ((line.tokens[0].name == L"РїРѕРєР°") || (line.tokens[0].name == L"РёРЅР°С‡Рµ")) line.block_to = getBlock(code, ptr, false);
+		if (line.tokens[0].name == L"РµСЃР»Рё") {
 		line.block_to = getBlock(code, ptr, false);
 		Ptr old = ptr;
 		Line new_line = getLine(code, ptr);
-		if (new_line.tokens[0].name == L"иначе")
+		if (new_line.tokens[0].name == L"РёРЅР°С‡Рµ")
 			line.block_else = new_line.block_to;
 		else ptr = old;
 	}
 	return line;
 }
 
-//Получить главный блок вида 'скрипт {...}' из сырого кода
+//РџРѕР»СѓС‡РёС‚СЊ РіР»Р°РІРЅС‹Р№ Р±Р»РѕРє РІРёРґР° 'СЃРєСЂРёРїС‚ {...}' РёР· СЃС‹СЂРѕРіРѕ РєРѕРґР°
 Block analyze(vector<wstring>& rawCode, vector<Token>& gvars) {
 	Ptr ptr(0, 0);
 	Line line;
 	vector<Token> nul;
-	while (line.empty() || (line.tokens[0].type != Token::Type::PROC) || (line.tokens[0].name != L"скрипт")) {
+	while (line.empty() || (line.tokens[0].type != Token::Type::PROC) || (line.tokens[0].name != L"СЃРєСЂРёРїС‚")) {
 		if (!line.empty()) line.evaluate(gvars, nul, 0);
 		line = getLine(rawCode, ptr);
 	}
@@ -328,14 +327,14 @@ sf::Text text;
 vector<wstring> variants;
 int chosen = -1;
 
-//Выполнить блок кода рекурсивно, L"вернуть" в result если необходимо
-//Глобальные переменные передаются в gvars, локальные создаются на месте и убиваются в конце
+//Р’С‹РїРѕР»РЅРёС‚СЊ Р±Р»РѕРє РєРѕРґР° СЂРµРєСѓСЂСЃРёРІРЅРѕ, L"РІРµСЂРЅСѓС‚СЊ" РІ result РµСЃР»Рё РЅРµРѕР±С…РѕРґРёРјРѕ
+//Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РїРµСЂРµРґР°СЋС‚СЃСЏ РІ gvars, Р»РѕРєР°Р»СЊРЅС‹Рµ СЃРѕР·РґР°СЋС‚СЃСЏ РЅР° РјРµСЃС‚Рµ Рё СѓР±РёРІР°СЋС‚СЃСЏ РІ РєРѕРЅС†Рµ
 bool Block::execute(vector<Token>& gvars, Ptr& ptr, Token& result) {
 	vector<Token> lvars;
 	for (int& i = ptr.lptr; i < size(); i++) {
 		if (!executing) exit(0);
 		if (line(i).tokens[0].type == Token::Type::PROC) {
-			if (line(i).tokens[0].name == L"если") {
+			if (line(i).tokens[0].name == L"РµСЃР»Рё") {
 				Token res = line(i).evaluate(lvars, gvars, 1);
 				if (res.vtype != Token::vType::BOOL) {
 					Line line;
@@ -402,11 +401,11 @@ bool Block::execute(vector<Token>& gvars, Ptr& ptr, Token& result) {
 					}
 				}
 			}
-			else if (line(i).tokens[0].name == L"вернуть") {
+			else if (line(i).tokens[0].name == L"РІРµСЂРЅСѓС‚СЊ") {
 				result = line(i).evaluate(lvars, gvars, 1);
 				return false;
 			}
-			else if (line(i).tokens[0].name == L"пока") {
+			else if (line(i).tokens[0].name == L"РїРѕРєР°") {
 				while (1) {
 					Token res = line(i).evaluate(lvars, gvars, 1);
 					if (res.vtype != Token::vType::BOOL) {
@@ -447,7 +446,7 @@ bool Block::execute(vector<Token>& gvars, Ptr& ptr, Token& result) {
 					}
 				}
 			}
-			else if (line(i).tokens[0].name == L"сказать") {
+			else if (line(i).tokens[0].name == L"СЃРєР°Р·Р°С‚СЊ") {
 				Token res = line(i).evaluate(lvars, gvars, 1);
 				if (res.vtype != Token::vType::STR) {
 					Line line;
@@ -474,7 +473,7 @@ bool Block::execute(vector<Token>& gvars, Ptr& ptr, Token& result) {
 				if (executing) waiting = true;
 				while (waiting) Sleep(1);
 			}
-			else if (line(i).tokens[0].name == L"выбор") {
+			else if (line(i).tokens[0].name == L"РІС‹Р±РѕСЂ") {
 				variants.clear();
 				for (int j = 0; j < line(i).block_to.size(); j++)
 					variants.push_back(line(i).block_to.line(j).tokens[0].sval);
@@ -510,7 +509,7 @@ bool Block::execute(vector<Token>& gvars, Ptr& ptr, Token& result) {
 		}
 		else if (line(i).tokens[0].type == Token::Type::VAR) {
 			Token ischar = line(i).evaluate(lvars, gvars, 0);
-			if ((ischar.vtype == Token::vType::CHAR) && (line(i).tokens.size() > 2) && (line(i).tokens[1].type == Token::Type::PROC) && (line(i).tokens[1].name == L"говорит")) {
+			if ((ischar.vtype == Token::vType::CHAR) && (line(i).tokens.size() > 2) && (line(i).tokens[1].type == Token::Type::PROC) && (line(i).tokens[1].name == L"РіРѕРІРѕСЂРёС‚")) {
 				Token res = line(i).evaluate(lvars, gvars, 2);
 				if (res.vtype != Token::vType::STR) {
 					Line line;
@@ -553,31 +552,31 @@ void executingThread(sf::RenderWindow* window) {
 
 	vector<wstring> rawCode;
 	try {
-		//Считываем сырой код из файла, остальные файлы подключаются рекурсивно по необходимости
+		//РЎС‡РёС‚С‹РІР°РµРј СЃС‹СЂРѕР№ РєРѕРґ РёР· С„Р°Р№Р»Р°, РѕСЃС‚Р°Р»СЊРЅС‹Рµ С„Р°Р№Р»С‹ РїРѕРґРєР»СЋС‡Р°СЋС‚СЃСЏ СЂРµРєСѓСЂСЃРёРІРЅРѕ РїРѕ РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё
 		read(rawCode, L"script.kek");
 	}
 	catch (exception e) {
 		wcout << L"Non-fatal runtime error: " << e.what() << endl;
 	}
-	//Выводим
+	//Р’С‹РІРѕРґРёРј
 	wcout << L"raw code:" << endl;
 	for (int i = 0; i < rawCode.size(); i++) wcout << i << L">" << rawCode[i] << endl;
 
-	vector<Token> gvars;	// Глобальные переменные кода
+	vector<Token> gvars;	//Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РєРѕРґР°
 	Block mainBlock;
 	try {
-		//Считываем главный блок из сырого кода, попутно подгружаем глобальные объявления
+		//РЎС‡РёС‚С‹РІР°РµРј РіР»Р°РІРЅС‹Р№ Р±Р»РѕРє РёР· СЃС‹СЂРѕРіРѕ РєРѕРґР°, РїРѕРїСѓС‚РЅРѕ РїРѕРґРіСЂСѓР¶Р°РµРј РіР»РѕР±Р°Р»СЊРЅС‹Рµ РѕР±СЉСЏРІР»РµРЅРёСЏ
 		mainBlock = analyze(rawCode, gvars);
 	}
 	catch (exception e) {
 		wcout << "Fatal syntax error: " << e.what() << endl;
 		return;
 	}
-	//Выводим
+	//Р’С‹РІРѕРґРёРј
 	wcout << endl << L"script:" << endl;
 	printBlock(mainBlock, 1);
 
-	//Выполняем главный блок
+	//Р’С‹РїРѕР»РЅСЏРµРј РіР»Р°РІРЅС‹Р№ Р±Р»РѕРє
 	Ptr ptr(0, 0);
 	wcout << endl << L"start:" << endl;
 	try {
@@ -642,7 +641,7 @@ public:
 };
 
 int main() {
-	//Устанавливаем русскую кодировку
+	//РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂСѓСЃСЃРєСѓСЋ РєРѕРґРёСЂРѕРІРєСѓ
 	SetConsoleCP(1251); SetConsoleOutputCP(1251);
 	setlocale(LC_ALL, "Russian");
 
