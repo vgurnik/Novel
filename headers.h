@@ -1,10 +1,11 @@
+//made by vgurnik
 #pragma once
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
 
-//Двумерный указатель: lptr - номер строки, sptr - номер символа в ней
+//Г„ГўГіГ¬ГҐГ°Г­Г»Г© ГіГЄГ Г§Г ГІГҐГ«Гј: lptr - Г­Г®Г¬ГҐГ° Г±ГІГ°Г®ГЄГЁ, sptr - Г­Г®Г¬ГҐГ° Г±ГЁГ¬ГўГ®Г«Г  Гў Г­ГҐГ©
 struct Ptr {
 	int sptr = 0;
 	int lptr = 0;
@@ -14,8 +15,8 @@ struct Ptr {
 class Line;
 class Block;
 
-//Токен: структурный элемент кода с описанием / переменная с ее значением
-//Токен типа func - функция с блоком кода
+//Г’Г®ГЄГҐГ­: Г±ГІГ°ГіГЄГІГіГ°Г­Г»Г© ГЅГ«ГҐГ¬ГҐГ­ГІ ГЄГ®Г¤Г  Г± Г®ГЇГЁГ±Г Г­ГЁГҐГ¬ / ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г Гї Г± ГҐГҐ Г§Г­Г Г·ГҐГ­ГЁГҐГ¬
+//Г’Г®ГЄГҐГ­ ГІГЁГЇГ  func - ГґГіГ­ГЄГ¶ГЁГї Г± ГЎГ«Г®ГЄГ®Г¬ ГЄГ®Г¤Г 
 struct Token {
 	enum class Type { VAR, VAL, OPER, PROC, TYPE, FUNC, MISC } type = Type::MISC;
 	enum class vType { INT, FLOAT, STR, BOOL, LABEL, CHAR, PIC, MISC } vtype = vType::MISC;
@@ -27,7 +28,7 @@ struct Token {
 	vector<Block> corresp;
 };
 
-//Блок кода из последовательных линий lines, execute исполняет его, lvars - его локальные переменные/метки, gvars - глобальные (извне)
+//ГЃГ«Г®ГЄ ГЄГ®Г¤Г  ГЁГ§ ГЇГ®Г±Г«ГҐГ¤Г®ГўГ ГІГҐГ«ГјГ­Г»Гµ Г«ГЁГ­ГЁГ© lines, execute ГЁГ±ГЇГ®Г«Г­ГїГҐГІ ГҐГЈГ®, lvars - ГҐГЈГ® Г«Г®ГЄГ Г«ГјГ­Г»ГҐ ГЇГҐГ°ГҐГ¬ГҐГ­Г­Г»ГҐ/Г¬ГҐГІГЄГЁ, gvars - ГЈГ«Г®ГЎГ Г«ГјГ­Г»ГҐ (ГЁГ§ГўГ­ГҐ)
 class Block {
 	vector<Line> lines;
 	vector<Token> lvars;
@@ -57,13 +58,13 @@ void Block::add_first(Line& line) {
 	lines.insert(lines.begin(), line);
 }
 
-//Линия кода из токенов, block_to - приоритетный привязанный к ней блок (для 'если', 'пока', 'выбор'), block_else - блок для 'иначе'
-//Note: для линии 'выбор' block_to состоит из линий типа:
-//один токен типа PROC 'выбор', с названием варианта в sval и сопутствующим блоком в block_to
+//Г‹ГЁГ­ГЁГї ГЄГ®Г¤Г  ГЁГ§ ГІГ®ГЄГҐГ­Г®Гў, block_to - ГЇГ°ГЁГ®Г°ГЁГІГҐГІГ­Г»Г© ГЇГ°ГЁГўГїГ§Г Г­Г­Г»Г© ГЄ Г­ГҐГ© ГЎГ«Г®ГЄ (Г¤Г«Гї 'ГҐГ±Г«ГЁ', 'ГЇГ®ГЄГ ', 'ГўГ»ГЎГ®Г°'), block_else - ГЎГ«Г®ГЄ Г¤Г«Гї 'ГЁГ­Г Г·ГҐ'
+//Note: Г¤Г«Гї Г«ГЁГ­ГЁГЁ 'ГўГ»ГЎГ®Г°' block_to Г±Г®Г±ГІГ®ГЁГІ ГЁГ§ Г«ГЁГ­ГЁГ© ГІГЁГЇГ :
+//Г®Г¤ГЁГ­ ГІГ®ГЄГҐГ­ ГІГЁГЇГ  PROC 'ГўГ»ГЎГ®Г°', Г± Г­Г Г§ГўГ Г­ГЁГҐГ¬ ГўГ Г°ГЁГ Г­ГІГ  Гў sval ГЁ Г±Г®ГЇГіГІГ±ГІГўГіГѕГ№ГЁГ¬ ГЎГ«Г®ГЄГ®Г¬ Гў block_to
 class Line {
 	int ptr = 0;
 
-	///Функции-калькуляторы///
+	///Г”ГіГ­ГЄГ¶ГЁГЁ-ГЄГ Г«ГјГЄГіГ«ГїГІГ®Г°Г»///
 
 	/*
 	(Stat)
@@ -180,7 +181,7 @@ Token Line::getPrim() {
 			if (res.vtype != Token::vType::CHAR) throw runtime_error("non-subscriptible type");
 			ptr++;
 			if (!((ptr < tokens.size()) && (tokens[ptr].type == Token::Type::VAR))) throw runtime_error("expected parameter name");
-			if (tokens[ptr].name == L"имя") {
+			if (tokens[ptr].name == L"ГЁГ¬Гї") {
 				res.vtype = Token::vType::STR;
 				int pos;
 				if ((pos = res.sval.find(L"name")) >= 0) {
@@ -189,7 +190,7 @@ Token Line::getPrim() {
 				}
 				else res.sval = res.name;
 			}
-			else if (tokens[ptr].name == L"спрайт") {
+			else if (tokens[ptr].name == L"Г±ГЇГ°Г Г©ГІ") {
 				res.vtype = Token::vType::STR;
 				int pos;
 				if ((pos = res.sval.find(L"sprite")) >= 0) {
@@ -366,7 +367,7 @@ Token Line::getExpr() {
 					switch (res.vtype) {
 					case Token::vType::STR: break;
 					case Token::vType::BOOL:
-						res.sval = (res.ival == 0) ? L"ложь" : L"правда"; break;
+						res.sval = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 					case Token::vType::INT:
 						res.sval = to_wstring(res.ival); break;
 					case Token::vType::FLOAT:
@@ -378,7 +379,7 @@ Token Line::getExpr() {
 					switch (rval.vtype) {
 					case Token::vType::STR: break;
 					case Token::vType::BOOL:
-						rval.sval = (rval.ival == 0) ? L"ложь" : L"правда"; break;
+						rval.sval = (rval.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 					case Token::vType::INT:
 						rval.sval = to_wstring(rval.ival); break;
 					case Token::vType::FLOAT:
@@ -573,8 +574,8 @@ Token Line::getAss() {
 	if ((ptr < tokens.size()) && (tokens[ptr].type == Token::Type::OPER) && (tokens[ptr].name == L".")) {
 		ptr++;
 		if (!((ptr < tokens.size()) && (tokens[ptr].type == Token::Type::VAR))) throw runtime_error("expected parameter name");
-		if (tokens[ptr].name == L"имя") param = tokens[ptr].name;
-		if (tokens[ptr].name == L"спрайт") param = tokens[ptr].name;
+		if (tokens[ptr].name == L"ГЁГ¬Гї") param = tokens[ptr].name;
+		if (tokens[ptr].name == L"Г±ГЇГ°Г Г©ГІ") param = tokens[ptr].name;
 		if (param==L"") throw runtime_error("incorrect parameter name");
 		ptr++;
 	}
@@ -611,7 +612,7 @@ Token Line::getAss() {
 			case Token::vType::STR:
 				gvars[i].sval = res.sval; break;
 			case Token::vType::BOOL:
-				gvars[i].sval = (res.ival == 0) ? L"ложь" : L"правда"; break;
+				gvars[i].sval = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 			case Token::vType::INT:
 				gvars[i].sval = to_wstring(res.ival); break;
 			case Token::vType::FLOAT:
@@ -623,12 +624,12 @@ Token Line::getAss() {
 			break;
 		case Token::vType::CHAR:
 			if (param != L"") {
-				if (param == L"имя") {
+				if (param == L"ГЁГ¬Гї") {
 					switch (res.vtype) {
 					case Token::vType::STR:
 						param = res.sval; break;
 					case Token::vType::BOOL:
-						param = (res.ival == 0) ? L"ложь" : L"правда"; break;
+						param = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 					case Token::vType::INT:
 						param = to_wstring(res.ival); break;
 					case Token::vType::FLOAT:
@@ -645,12 +646,12 @@ Token Line::getAss() {
 					}
 					else gvars[i].sval += L"name=" + param + L";";
 				}
-				else if(param == L"спрайт") {
+				else if(param == L"Г±ГЇГ°Г Г©ГІ") {
 					switch (res.vtype) {
 					case Token::vType::STR:
 						param = res.sval; break;
 					case Token::vType::BOOL:
-						param = (res.ival == 0) ? L"ложь" : L"правда"; break;
+						param = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 					case Token::vType::INT:
 						param = to_wstring(res.ival); break;
 					case Token::vType::FLOAT:
@@ -713,7 +714,7 @@ Token Line::getAss() {
 		case Token::vType::STR:
 			lvars[i].sval = res.sval; break;
 		case Token::vType::BOOL:
-			lvars[i].sval = (res.ival == 0) ? L"ложь" : L"правда"; break;
+			lvars[i].sval = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 		case Token::vType::INT:
 			lvars[i].sval = to_wstring(res.ival); break;
 		case Token::vType::FLOAT:
@@ -725,12 +726,12 @@ Token Line::getAss() {
 		break;
 	case Token::vType::CHAR:
 		if (param != L"") {
-			if (param == L"имя") {
+			if (param == L"ГЁГ¬Гї") {
 				switch (res.vtype) {
 				case Token::vType::STR:
 					param = res.sval; break;
 				case Token::vType::BOOL:
-					param = (res.ival == 0) ? L"ложь" : L"правда"; break;
+					param = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 				case Token::vType::INT:
 					param = to_wstring(res.ival); break;
 				case Token::vType::FLOAT:
@@ -747,12 +748,12 @@ Token Line::getAss() {
 				}
 				else lvars[i].sval += L"name=" + param + L";";
 			}
-			else if (param == L"спрайт") {
+			else if (param == L"Г±ГЇГ°Г Г©ГІ") {
 				switch (res.vtype) {
 				case Token::vType::STR:
 					param = res.sval; break;
 				case Token::vType::BOOL:
-					param = (res.ival == 0) ? L"ложь" : L"правда"; break;
+					param = (res.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 				case Token::vType::INT:
 					param = to_wstring(res.ival); break;
 				case Token::vType::FLOAT:
@@ -785,7 +786,7 @@ Token Line::getAss() {
 Token Line::getDecl() {
 	if (tokens[ptr].type != Token::Type::TYPE) throw runtime_error("incorrect declaration type");
 	Token res;
-	if (tokens[ptr].name == L"функция") {
+	if (tokens[ptr].name == L"ГґГіГ­ГЄГ¶ГЁГї") {
 		ptr++;
 		if (tokens[ptr].type != Token::Type::VAR) throw runtime_error("expected variable/const name");
 		res.name = tokens[ptr].name;
@@ -801,17 +802,17 @@ Token Line::getDecl() {
 	}
 	res.type = Token::Type::VAR;
 	bool type = false;
-	if (tokens[ptr].name == L"пусть") type = true;
-	else if (tokens[ptr].name == L"целое") res.vtype = Token::vType::INT;
-	else if (tokens[ptr].name == L"дробное") res.vtype = Token::vType::FLOAT;
-	else if (tokens[ptr].name == L"строка") res.vtype = Token::vType::STR;
-	else if (tokens[ptr].name == L"логическое") res.vtype = Token::vType::BOOL;
-	else if (tokens[ptr].name == L"метка") res.vtype = Token::vType::LABEL;
-	else if (tokens[ptr].name == L"картинка") res.vtype = Token::vType::PIC;
-	else if (tokens[ptr].name == L"персонаж") res.vtype = Token::vType::CHAR;
+	if (tokens[ptr].name == L"ГЇГіГ±ГІГј") type = true;
+	else if (tokens[ptr].name == L"Г¶ГҐГ«Г®ГҐ") res.vtype = Token::vType::INT;
+	else if (tokens[ptr].name == L"Г¤Г°Г®ГЎГ­Г®ГҐ") res.vtype = Token::vType::FLOAT;
+	else if (tokens[ptr].name == L"Г±ГІГ°Г®ГЄГ ") res.vtype = Token::vType::STR;
+	else if (tokens[ptr].name == L"Г«Г®ГЈГЁГ·ГҐГ±ГЄГ®ГҐ") res.vtype = Token::vType::BOOL;
+	else if (tokens[ptr].name == L"Г¬ГҐГІГЄГ ") res.vtype = Token::vType::LABEL;
+	else if (tokens[ptr].name == L"ГЄГ Г°ГІГЁГ­ГЄГ ") res.vtype = Token::vType::PIC;
+	else if (tokens[ptr].name == L"ГЇГҐГ°Г±Г®Г­Г Г¦") res.vtype = Token::vType::CHAR;
 	else res.vtype = Token::vType::MISC;
 	ptr++;
-	if ((tokens[ptr].type == Token::Type::TYPE) && (tokens[ptr].name == L"константа")) {
+	if ((tokens[ptr].type == Token::Type::TYPE) && (tokens[ptr].name == L"ГЄГ®Г­Г±ГІГ Г­ГІГ ")) {
 		res.is_const = true;
 		ptr++;
 	}
@@ -862,7 +863,7 @@ Token Line::getDecl() {
 			case Token::vType::STR:
 				res.sval = rval.sval; break;
 			case Token::vType::BOOL:
-				res.sval = (rval.ival == 0) ? L"ложь" : L"правда"; break;
+				res.sval = (rval.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 			case Token::vType::INT:
 				res.sval = to_wstring(rval.ival); break;
 			case Token::vType::FLOAT:
@@ -875,7 +876,7 @@ Token Line::getDecl() {
 			case Token::vType::STR:
 				res.sval = rval.sval; break;
 			case Token::vType::BOOL:
-				res.sval = (rval.ival == 0) ? L"ложь" : L"правда"; break;
+				res.sval = (rval.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 			case Token::vType::INT:
 				res.sval = to_wstring(rval.ival); break;
 			case Token::vType::FLOAT:
@@ -891,7 +892,7 @@ Token Line::getDecl() {
 			case Token::vType::STR:
 				res.sval = L"name=" + rval.sval + L";"; break;
 			case Token::vType::BOOL:
-				res.sval = (rval.ival == 0) ? L"ложь" : L"правда"; break;
+				res.sval = (rval.ival == 0) ? L"Г«Г®Г¦Гј" : L"ГЇГ°Г ГўГ¤Г "; break;
 			case Token::vType::INT:
 				res.sval = to_wstring(rval.ival); break;
 			case Token::vType::FLOAT:
@@ -922,7 +923,7 @@ bool Line::empty() {
 	return (tokens.size() == 0);
 }
 
-//Вычислить значение строки, начиная с ptr_, положение указателя сохраняется в ptr, вернуть результат токеном
+//Г‚Г»Г·ГЁГ±Г«ГЁГІГј Г§Г­Г Г·ГҐГ­ГЁГҐ Г±ГІГ°Г®ГЄГЁ, Г­Г Г·ГЁГ­Г Гї Г± ptr_, ГЇГ®Г«Г®Г¦ГҐГ­ГЁГҐ ГіГЄГ Г§Г ГІГҐГ«Гї Г±Г®ГµГ°Г Г­ГїГҐГІГ±Гї Гў ptr, ГўГҐГ°Г­ГіГІГј Г°ГҐГ§ГіГ«ГјГІГ ГІ ГІГ®ГЄГҐГ­Г®Г¬
 Token Line::evaluate(vector<Token>& lvars_, vector<Token>& gvars_, int ptr_ = 0) {
 	ptr = ptr_;
 	lvars = lvars_;
